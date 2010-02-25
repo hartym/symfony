@@ -168,7 +168,7 @@ class Container implements ContainerInterface, \ArrayAccess
    */
   public function hasService($id)
   {
-    return isset($this->services[$id]) || method_exists($this, 'get'.strtr($id, array('_' => '', '.' => '_')).'Service');
+    return isset($this->services[$id]) || method_exists($this, sprintf('get%sService', self::camelize($id)));
   }
 
   /**
@@ -193,7 +193,7 @@ class Container implements ContainerInterface, \ArrayAccess
       throw new \InvalidArgumentException(sprintf('A service id should be a string (%s given).', str_replace("\n", '', var_export($id, true))));
     }
 
-    if (method_exists($this, $method = 'get'.strtr($id, array('_' => '', '.' => '_')).'Service'))
+    if (method_exists($this, $method = sprintf('get%sService', self::camelize($id))))
     {
       return $this->$method();
     }
