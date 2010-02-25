@@ -34,15 +34,21 @@ class SimpleXMLElement extends \SimpleXMLElement
       switch ($arg['type'])
       {
         case 'service':
-          $invalidBehavior = Container::EXCEPTION_ON_INVALID_REFERENCE;
-          if (isset($arg['on-invalid']) && 'ignore' == $arg['on-invalid'])
+          switch(isset($arg['on-invalid']) ? $arg['on-invalid'] : null)
           {
-            $invalidBehavior = Container::IGNORE_ON_INVALID_REFERENCE;
+            case 'ignore':
+              $invalidBehavior = Container::IGNORE_ON_INVALID_REFERENCE;
+              break;
+
+            case 'null':
+              $invalidBehavior = Container::NULL_ON_INVALID_REFERENCE;
+              break;
+
+            default:
+              $invalidBehavior = Container::EXCEPTION_ON_INVALID_REFERENCE;
+              break;
           }
-          elseif (isset($arg['on-invalid']) && 'null' == $arg['on-invalid'])
-          {
-            $invalidBehavior = Container::NULL_ON_INVALID_REFERENCE;
-          }
+
           $arguments[$key] = new Reference((string) $arg['id'], $invalidBehavior);
           break;
         case 'collection':
